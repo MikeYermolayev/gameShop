@@ -6,18 +6,54 @@
                 :include-macros true]
             [shop.ls :as ls]))
 
+
+(defn error-handler [{:keys [status status-text]}]
+  (.log js/console "something bad happened:"))
+
+
+(defn game-view
+    [game]
+    (reify
+        om/IRender
+        (render [_]
+                (dom/div nil (:name game))
+        )
+    )
+)
+
+(defn games-list-view
+    [games]
+    (reify
+        om/IRender
+        (render [_]
+            (dom/div nil
+                (om/build-all game-view games)
+            )
+        )
+    )
+)
+
 (defn homeView
   [state owner]
-  (println state)
   (reify
+    om/IDidMount
+      (did-mount [_]
+        (GET "/game" 
+            {
+            :response-format (json-response-format {:keywords? true})
+            :handler ( fn[response]  (om/update! state [:games] (:games response))  ) 
+            :error-handler error-handler}
+            )
+        )
     om/IRender
     (render [_]
       (dom/div nil
         (dom/header nil
-          (dom/h5 nil str "Welcome to the online game shop, " (:username (:user state)))
-          (dom/button #js {:href "#/login"
-                          :onClick (fn [e]
-                            (ls/remove-item! "token")
-                            (om/update! state [:user] {})
-                            (sec/dispatch! "/login"))} "Log out"))
-        ))))
+          (dom/div nil
+                (om/build games-list-view (:games state))
+          )
+        )
+      )
+    )
+  )
+  )

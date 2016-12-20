@@ -19,7 +19,8 @@
             [buddy.auth.backends.token :refer [jws-backend]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.hashers :as hashers]
-            [shop.dao.user :as userDao])
+            [shop.dao.user :as userDao]
+            [shop.dao.games :as gamesDao])
   (:gen-class))
 
 (let [{:keys [ch-recv send-fn connected-uids
@@ -85,7 +86,7 @@
                     :exp (time/plus (time/now) (time/seconds 3600))}
             token (jwt/sign claims secret {:alg :hs512})]
         (ok {:token token :user user}))
-      (bad {:message (hashers/check password (:password user))}))))
+      (bad {:message "Password incorrect"}))))
 
 (defn register
   [request]
@@ -100,14 +101,29 @@
         (ok {:token token :user newUser}))
       (bad {:message "user exists"}))))
 
+(defn createGame [request] (bad {:message (get-in request [:body :name])}))
+(defn removeGame [request] (bad {:message (get-in request [:body :name])}))
+(defn updateGame [request])
+(defn getAllGames [request]
+    (let [games (gamesDao/getAllGames)]
+      (if(= games nil)
+        (bad {:message "error"})
+        (ok {:games games})
+        )
+      )
+  )
 (defroutes routes
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
+  (GET "/game" [] getAllGames)
   (GET "/*" _
     {:status 200
      :headers {"Content-Type" "text/html; charset=utf-8"}
      :body (io/input-stream (io/resource "public/index.html"))})
   (POST "/login" [] login)
+  (POST "/game" [] createGame)
+  (PUT "/game" [] updateGame)
+  (DELETE "/game" [] removeGame)
   (POST "/register" [] register)
   (resources "/")
   (resources "/react" {:root "react"}))

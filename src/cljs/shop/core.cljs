@@ -38,90 +38,60 @@
 )
 
 (defonce app-state (atom {:user {}
-                          :categories []}))
+                          :games []}))
 
-(defn users []
-    (om/ref-cursor (:users (om/root-cursor app-state))))
 
-(defn editable-text-view
-    [state owner {:keys [state-key]}]
-    (reify
-        om/IInitState
-        (init-state [_]
-            {:editable false
-                :temp-value nil})
-        om/IRenderState
-        (render-state [_ {:keys [editable temp-value]}]
-            (letfn [(cancel []
-                (om/set-state! owner :editable false)
+; (defn editable-text-view
+;     [state owner {:keys [state-key]}]
+;     (reify
+;         om/IInitState
+;         (init-state [_]
+;             {:editable false
+;                 :temp-value nil})
+;         om/IRenderState
+;         (render-state [_ {:keys [editable temp-value]}]
+;             (letfn [(cancel []
+;                 (om/set-state! owner :editable false)
 
-                )
-            (save []
-                (om/update! state state-key temp-value)
-                (om/set-state! owner :editable false))])
-            (if editable
-                (dom/input #js {:value temp-value
-                    :onKeyDown (fn[e]
-                        (let [key (.-key e)]
-                            (case key
-                                "Escape" (om/set-state! owner :editable false)
-                                "Enter" ((om/update! state state-key temp-value)
-                                        (om/set-state! owner :editable false))
-                            nil)))
-                    :onChange (fn[e]
-                        (om/set-state! owner :temp-value (.-value (.-target e))))})
-                (dom/div #js {:onClick (fn [e]
-                    (om/set-state! owner :temp-value (state-key state))
-                    (om/set-state! owner :editable true))}
-                (state-key state))))))
+;                 )
+;             (save []
+;                 (om/update! state state-key temp-value)
+;                 (om/set-state! owner :editable false))])
+;             (if editable
+;                 (dom/input #js {:value temp-value
+;                     :onKeyDown (fn[e]
+;                         (let [key (.-key e)]
+;                             (case key
+;                                 "Escape" (om/set-state! owner :editable false)
+;                                 "Enter" ((om/update! state state-key temp-value)
+;                                         (om/set-state! owner :editable false))
+;                             nil)))
+;                     :onChange (fn[e]
+;                         (om/set-state! owner :temp-value (.-value (.-target e))))})
+;                 (dom/div #js {:onClick (fn [e]
+;                     (om/set-state! owner :temp-value (state-key state))
+;                     (om/set-state! owner :editable true))}
+;                 (state-key state))))))
 
-(defn user-view
-    [user owner]
-    (reify
-        om/IRender
-        (render [_]
-            (dom/div nil
-                (om/build editable-text-view user {:opts {:state-key :name}})
-                (dom/div nil (:email user))
-                (dom/button #js {:onClick (fn [e] 
-                    (let [cursor (users)]
-                        (om/update! cursor
-                            (vec (remove #(= (:id user)
-                                        (:id %))
-                                    cursor)))
-                    ))}
-                "Delete")))))
 
-(defn users-list-view
-    [users owener]
-    (reify
-        om/IRender
-        (render [_]
-            (dom/div nil
-                (to-array (om/build-all user-view users))
-                (dom/button #js {:onClick (fn[e]
-                    (chsk-send! [:games/fetch] 3000 (fn [response] (om/transact! users 
-                        (fn [_]
-                            response)))))}
-                "Fetch games")))))
 
-(defn app-view
-    [state owner]
-    (reify
-        om/IRender
-        (render [_]
-            (dom/div nil
-                (om/build users-list-view (:users state))))))
+; (defn app-view
+;     [state owner]
+;     (reify
+;         om/IRender
+;         (render [_]
+;             (dom/div nil
+;                 (om/build users-list-view (:users state))))))
 
 (sec/defroute login-page "/login" []
     (om/root shop.login/login-view
         app-state
         {:target (.getElementById js/document "app")}))
 
-(sec/defroute index-page "/users" []
-    (om/root app-view
-        app-state
-        {:target (.getElementById js/document "app")}))
+; (sec/defroute index-page "/users" []
+;     (om/root app-view
+;         app-state
+;         {:target (.getElementById js/document "app")}))
 
 (sec/defroute home-page "/home" []
     (om/root homeView
