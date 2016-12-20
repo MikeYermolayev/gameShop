@@ -13,7 +13,7 @@
                  [ring.middleware.logger "0.5.0"]
                  [compojure "1.5.0"]
                  [environ "1.0.3"]
-                 [org.omcljs/om "1.0.0-alpha36"]
+                 [org.omcljs/om "0.9.0"]
                  [http-kit "2.2.0"]
                  [com.taoensso/sente "1.11.0"]
                  [secretary "1.2.3"]

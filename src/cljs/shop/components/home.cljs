@@ -12,22 +12,21 @@
 
 
 (defn game-view
-    [game]
+    [game owner]
     (reify
         om/IRender
         (render [_]
-                (dom/div nil (:name game))
+          (dom/div nil (:name game)))
         )
     )
-)
 
 (defn games-list-view
-    [games]
+    [games owner]
     (reify
         om/IRender
-        (render [_]
+        (render [this]
             (dom/div nil
-                (om/build-all game-view games)
+                (to-array (om/build-all game-view games))
             )
         )
     )
