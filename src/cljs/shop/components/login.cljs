@@ -17,7 +17,7 @@
                     :handler (fn [response] 
                       (ls/set-item! "token" (:token response))
                       (om/transact! state :user (fn [_]
-                        (select-keys (:user response) [:username :isadmin])))
+                        (:user response)))
                       (sec/dispatch! "/home"))}))))
 
 (defn login-view

@@ -12,6 +12,7 @@
             [accountant.core :as accountant]
             [shop.home :refer [homeView]]
             [shop.login]
+            [ajax.core :refer [GET POST json-response-format]]
             [shop.ls])
   (:import goog.History))
 
@@ -39,6 +40,8 @@
 
 (defonce app-state (atom {:user {}
                           :games []}))
+(defn global-state []
+    (om/ref-cursor (om/root-cursor app-state)))
 
 
 ; (defn editable-text-view
@@ -52,7 +55,6 @@
 ;         (render-state [_ {:keys [editable temp-value]}]
 ;             (letfn [(cancel []
 ;                 (om/set-state! owner :editable false)
-
 ;                 )
 ;             (save []
 ;                 (om/update! state state-key temp-value)
@@ -99,11 +101,19 @@
         {:target (.getElementById js/document "app")}))
 
 (defn main []
-  (let [url (if (shop.ls/get-item "token")
-              "#/login"
-              "#/login")]
-    (-> js/document
+  (let [token (shop.ls/get-item "token")]
+    (if token
+      (POST "/verifyToken" {:format :json
+                            :response-format (json-response-format {:keywords? true})
+                            :headers {"Authorization" (str "Token " token)}
+                            :handler (fn [response]
+                              (om/update! (global-state) [:user] (:user response))
+                              (-> js/document
+                                .-location
+                                (set! "#/home")))})
+      (-> js/document
         .-location
-        (set! url))))
+        (set! "#/login")))))
+    
 
 (main)
