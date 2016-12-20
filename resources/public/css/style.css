@@ -8,9 +8,54 @@ body,html{
 	width: 100%;
 	font-family: 'Roboto', sans-serif;
 	height: 100%;
+     background: #d7f2ea;
 }
 body *{
 	box-sizing: border-box;
+    outline: none;
+
+}
+
+.item-info span{
+        font-style: italic;
+}
+
+.item-name{
+    font-weight: 200;
+    font-size: 40px;
+    max-width: 300px;
+    color: #49766a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.item{
+    display: flex;
+    min-width: 700px;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    margin-top: 5px;
+    border-left: 8px solid #648078;
+    position: relative;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.07);
+}
+
+.item-info{
+    position: absolute;
+    left: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.item-price{
+    position: absolute;
+    right: 5px;
+    font-size: 40px;
+    font-weight: 200;
+    color: #167c5c;
 }
 
 #app{
@@ -19,6 +64,17 @@ body *{
 }
 #app >div{
 	height: 100%;
+}
+
+.content-inner{
+    padding : 5px;
+}
+.search-input{
+    width: 100%;
+    padding: 5px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #b2a8a8;
 }
 
 .content{
@@ -30,7 +86,17 @@ body *{
     overflow: auto;
 }
 
-.fa-shopping-basket{
+.button-info{
+    position: absolute;
+    right: 106px;
+}
+
+.button-info i{
+    margin-right: 2px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.pre-head .fa-shopping-basket{
 	position: absolute;
 	right : 5px;
 	cursor: pointer;
@@ -74,10 +140,10 @@ header{
     transition: 0.3s linear all;
     color: white;
 }
-.fa.fa-sign-out:hover, .fa-shopping-basket:hover{
+.fa:hover{
 	color : #ff7e7e;
 }
-.fa.fa-sign-out:active, .fa-shopping-basket:active{
+.fa:active{
 	color : red;
 }
 

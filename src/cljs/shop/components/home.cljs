@@ -4,6 +4,7 @@
             [ajax.core :refer [GET POST json-response-format]]
             [secretary.core :as sec
                 :include-macros true]
+            [shop.state]
             [shop.ls :as ls]))
 
 
@@ -16,15 +17,31 @@
     (reify
         om/IRender
         (render [_]
-                (dom/div nil (:name game))
+                (dom/div #js {:className "item"} 
+                      (dom/div #js{:className "button-info"}
+                        (when (:isadmin (shop.state/user))
+                            (dom/i #js {:className "fa fa-edit"})
+                        )
+                        (when (:isadmin (shop.state/user))
+                            (dom/i #js {:className "fa fa-trash"})
+                        )                          
+                        (dom/i #js {:className "fa fa-shopping-basket"})
+                        )
+                      (dom/div #js{:className "item-info"} 
+                          (dom/div #js {:className "item-year"} (dom/i nil "year : ")(:year game))
+                          (dom/div #js {:className "item-genre"} (dom/i nil "genre : ")(:genre game))
+                          (dom/div #js {:className "item-country"} (dom/i nil "country : ")(:country game))
+                        )
+                      (dom/div #js {:className "item-name"} (:name game))
+                      (dom/div #js {:className "item-price"} (:price game) "$")
+                  )
 
         )
     )
 )
 
 (defn games-list-view
-    [games isadmin]
-    (println isadmin)
+    [games]
     (reify
         om/IRender
         (render [_]
@@ -72,7 +89,8 @@
                :className "fa fa-shopping-basket"
               })
             )
-          (dom/div nil
+          (dom/div #js{:className "content-inner"}
+                (dom/input #js{:className "search-input" :type "text" :placeholder "Search by name"})
                 (om/build games-list-view (:games state) )
             )
           )

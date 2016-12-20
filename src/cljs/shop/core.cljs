@@ -13,6 +13,7 @@
             [shop.home :refer [homeView]]
             [shop.login]
             [ajax.core :refer [GET POST json-response-format]]
+            [shop.state]
             [shop.ls])
   (:import goog.History))
 
@@ -37,11 +38,6 @@
   (def chsk-send! send-fn) ; ChannelSocket's send API fn
   (def chsk-state state)   ; Watchable, read-only atom
 )
-
-(defonce app-state (atom {:user {}
-                          :games []}))
-(defn global-state []
-    (om/ref-cursor (om/root-cursor app-state)))
 
 
 ; (defn editable-text-view
@@ -87,7 +83,7 @@
 
 (sec/defroute login-page "/login" []
     (om/root shop.login/login-view
-        app-state
+        shop.state/app-state
         {:target (.getElementById js/document "app")}))
 
 ; (sec/defroute index-page "/users" []
@@ -97,7 +93,7 @@
 
 (sec/defroute home-page "/home" []
     (om/root homeView
-        app-state
+        shop.state/app-state
         {:target (.getElementById js/document "app")}))
 
 (defn main []
@@ -107,7 +103,7 @@
                             :response-format (json-response-format {:keywords? true})
                             :headers {"Authorization" (str "Token " token)}
                             :handler (fn [response]
-                              (om/update! (global-state) [:user] (:user response))
+                              (om/update! (shop.state/global-state) [:user] (:user response))
                               (-> js/document
                                 .-location
                                 (set! "#/home")))})
