@@ -1,4 +1,4 @@
-(defproject contacts "0.1.0-SNAPSHOT"
+(defproject shop "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -13,7 +13,17 @@
                  [ring.middleware.logger "0.5.0"]
                  [compojure "1.5.0"]
                  [environ "1.0.3"]
-                 [org.omcljs/om "1.0.0-alpha36"]]
+                 [org.omcljs/om "1.0.0-alpha36"]
+                 [http-kit "2.2.0"]
+                 [com.taoensso/sente "1.11.0"]
+                 [secretary "1.2.3"]
+                 [buddy/buddy-auth "1.3.0"]
+                 [buddy/buddy-hashers "1.1.0"]
+                 [ring/ring-json "0.4.0"]
+                 [cljs-ajax "0.5.8"]
+                 [venantius/accountant "0.1.7"]
+                 [org.clojure/java.jdbc "0.7.0-alpha1"]
+                 [mysql/mysql-connector-java "6.0.5"]]
 
   :plugins [[lein-cljsbuild "1.1.3"]
             [lein-environ "1.0.3"]]
@@ -26,10 +36,10 @@
 
   :clean-targets ^{:protect false} [:target-path :compile-path "resources/public/js"]
 
-  :uberjar-name "contacts.jar"
+  :uberjar-name "shop.jar"
 
   ;; Use `lein run` if you just want to start a HTTP server, without figwheel
-  :main contacts.server
+  :main shop.server
 
   ;; nREPL by default starts in the :main namespace, we want to start in `user`
   ;; because that's where our development helper functions like (run) and
@@ -42,25 +52,25 @@
 
                 :figwheel true
                 ;; Alternatively, you can configure a function to run every time figwheel reloads.
-                ;; :figwheel {:on-jsload "contacts.core/on-figwheel-reload"}
+                ;; :figwheel {:on-jsload "shop.core/on-figwheel-reload"}
 
-                :compiler {:main contacts.core
+                :compiler {:main shop.core
                            :asset-path "js/compiled/out"
-                           :output-to "resources/public/js/compiled/contacts.js"
+                           :output-to "resources/public/js/compiled/shop.js"
                            :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true}}
 
                {:id "test"
                 :source-paths ["src/cljs" "test/cljs" "src/cljc" "test/cljc"]
                 :compiler {:output-to "resources/public/js/compiled/testable.js"
-                           :main contacts.test-runner
+                           :main shop.test-runner
                            :optimizations :none}}
 
                {:id "min"
                 :source-paths ["src/cljs" "src/cljc"]
                 :jar true
-                :compiler {:main contacts.core
-                           :output-to "resources/public/js/compiled/contacts.js"
+                :compiler {:main shop.core
+                           :output-to "resources/public/js/compiled/shop.js"
                            :output-dir "target"
                            :source-map-timestamp true
                            :optimizations :advanced
