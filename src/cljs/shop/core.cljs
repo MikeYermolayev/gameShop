@@ -96,7 +96,8 @@
 ;         {:target (.getElementById js/document "app")}))
 
 (sec/defroute home-page "/home" []
-    (om/root homeView
+    (om/root 
+        homeView
         app-state
         {:target (.getElementById js/document "app")}))
 
@@ -106,6 +107,11 @@
       (POST "/verifyToken" {:format :json
                             :response-format (json-response-format {:keywords? true})
                             :headers {"Authorization" (str "Token " token)}
+                            :error-handler (fn [response]
+                              (shop.ls/remove-item! "token")
+                              (-> js/document
+                              .-location
+                              (set! "#/login")))
                             :handler (fn [response]
                               (om/update! (global-state) [:user] (:user response))
                               (-> js/document
