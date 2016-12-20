@@ -4,7 +4,7 @@
 
 (defn getAllGames [] 
   (j/query db
-    ["select games.name, year, genres.name as genre, countries.name as country from games join genres using (genre_id) join countries using (country_id)"]))
+    ["select games.id, games.name, year, price, genres.name as genre, countries.name as country from games join genres using (genre_id) join countries using (country_id)"]))
 
 (defn deleteGame [id]
   (j/query db 
