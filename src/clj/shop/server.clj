@@ -84,7 +84,7 @@
       (let [claims {:user (keyword username)
                     :exp (time/plus (time/now) (time/seconds 3600))}
             token (jwt/sign claims secret {:alg :hs512})]
-        (ok {:token token :user user}))
+        (ok {:token token :user (dissoc user :password)}))
       (bad {:message (hashers/check password (:password user))}))))
 
 (defn register
@@ -97,12 +97,19 @@
                       :exp (time/plus (time/now) (time/seconds 3600))}
               token (jwt/sign claims secret {:alg :hs512})
               newUser (userDao/insertNew {:username username :password (hashers/encrypt password)})]
-        (ok {:token token :user newUser}))
+        (ok {:token token :user (dissoc newUser :password)}))
       (bad {:message "user exists"}))))
+
+(defn verify
+  [request]
+  (if-not (authenticated? request)
+    (throw-unauthorized)
+    (ok {:user (dissoc (userDao/getUserByName (:user (:identity request))) :password)})))
 
 (defroutes routes
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
+  (POST "/verifyToken" [] verify)
   (GET "/*" _
     {:status 200
      :headers {"Content-Type" "text/html; charset=utf-8"}
