@@ -4,6 +4,7 @@
  	)
  (defonce app-state (atom {:user {}
                       :games []
+                      :isBasketShown false
                       :tempSearchValue nil
                       :allGames []
                       :filteredGenres []

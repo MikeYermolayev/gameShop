@@ -6,7 +6,8 @@
                 :include-macros true]
             [clojure.string :as str]
             [shop.state]
-            [shop.ls :as ls]))
+            [shop.ls :as ls]
+            [shop.basket]))
 
 
 (defn error-handler [{:keys [status status-text]}]
@@ -162,7 +163,10 @@
             } str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
             (dom/i #js {
                :className "fa fa-shopping-basket"
+               :onClick (fn [e]
+                          (om/update! state [:isBasketShown] true))
               })
+            (om/build shop.basket/basket state)
             )
           (when (:isadmin (shop.state/user))
             (dom/div #js {:className "add-item-panel"}
