@@ -4,8 +4,8 @@
 
 (defn display [show]
   (if show
-    #js {:opacity 1}
-    #js {:opacity 0}))
+    #js {:display "block"}
+    #js {:display "none"}))
 
 (defn basket
   [state owner]

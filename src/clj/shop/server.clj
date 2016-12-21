@@ -20,7 +20,8 @@
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.hashers :as hashers]
             [shop.dao.user :as userDao]
-            [shop.dao.games :as gamesDao])
+            [shop.dao.games :as gamesDao]
+            [shop.bank])
   (:gen-class))
 
 (let [{:keys [ch-recv send-fn connected-uids
@@ -41,6 +42,10 @@
 (defn ok [response] {:status 200 :body response})
 (defn bad [response] {:status 400 :body response})
 
+(defmacro dissoc-reversed
+  [operand1 operand2]
+  (list `dissoc operand2 operand1))
+
 (defmulti -event-msg-handler
   :id)
 
@@ -57,10 +62,10 @@
     (when ?reply-fn
       (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
 
-; (defmethod -event-msg-handler :games/fetch
-;   [{:keys [?reply-fn]}] (when ?reply-fn
-;     (?reply-fn @db))
-;   )
+(defmethod -event-msg-handler :transact/money
+  [{:keys [?data ?reply-fn]}] (when ?reply-fn
+    (?reply-fn (shop.bank/handle-payment 500 (:data ?data))))
+  )
 
 (defn stopRouter! []
   (when-let [stop-fn @router]
@@ -98,7 +103,7 @@
                       :exp (time/plus (time/now) (time/seconds 3600))}
               token (jwt/sign claims secret {:alg :hs512})
               newUser (userDao/insertNew {:username username :password (hashers/encrypt password)})]
-        (ok {:token token :user (dissoc newUser :password)}))
+        (ok {:token token :user (dissoc-reversed :password newUser)}))
       (bad {:message "user exists"}))))
 
 
@@ -155,7 +160,7 @@
   [request]
   (if-not (authenticated? request)
     (throw-unauthorized)
-    (ok {:user (dissoc (userDao/getUserByName (:user (:identity request))) :password)})))
+    (ok {:user (dissoc-reversed :password (userDao/getUserByName (:user (:identity request))))})))
 
 
 (defroutes routes
