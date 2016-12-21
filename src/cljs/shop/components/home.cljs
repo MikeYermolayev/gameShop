@@ -4,6 +4,7 @@
             [ajax.core :refer [GET POST json-response-format]]
             [secretary.core :as sec
                 :include-macros true]
+            [clojure.string :as str]
             [shop.state]
             [shop.ls :as ls]))
 
@@ -52,6 +53,27 @@
     )
 )
 
+(defn item-view
+    [item]
+    (reify
+        om/IRender
+        (render [_]
+                (dom/option #js {:className "item" :value (:id item)} (:name item) )
+
+        )
+    )
+)
+
+(defn select-list-view
+    [items]
+    (reify
+        om/IRender
+        (render [_]
+            (dom/select nil (om/build-all item-view items))
+        )
+    )
+)
+
 (defn homeView
   [state owner]
   (reify
@@ -60,7 +82,19 @@
         (GET "/game" 
             {
             :response-format (json-response-format {:keywords? true})
-            :handler ( fn[response]  (om/update! state [:games] (:games response))  ) 
+            :handler ( fn[response]  (om/update! state [:games] (:games response)) (om/update! state [:allGames] (:games response))  ) 
+            :error-handler error-handler}
+            )
+        (GET "/countries" 
+            {
+            :response-format (json-response-format {:keywords? true})
+            :handler ( fn[response] (println response)  (om/update! state [:countries] (:countries response))  ) 
+            :error-handler error-handler}
+            )
+        (GET "/genres" 
+            {
+            :response-format (json-response-format {:keywords? true})
+            :handler ( fn[response] (println response)  (om/update! state [:genres] (:genres response))  ) 
             :error-handler error-handler}
             )
         )
@@ -89,8 +123,31 @@
                :className "fa fa-shopping-basket"
               })
             )
+          (when (:isadmin (shop.state/user))
+            (dom/div #js {:className "add-item-panel"}
+                (dom/form nil 
+                  (dom/input #js{:type "text" :require "true"})
+                  (dom/input #js{:type "number" :require "true"})
+                  (om/build select-list-view (:countries state) )
+                  (om/build select-list-view (:genres state) )
+                  (dom/button #js{
+                            :onClick (fn [e])  
+                      } "add")
+                  )
+              )
+           )
           (dom/div #js{:className "content-inner"}
-                (dom/input #js{:className "search-input" :type "text" :placeholder "Search by name"})
+                (dom/input #js{:className "search-input" :value (:tempSearchValue state) :type "text" :placeholder "Search by name" 
+                  :onChange 
+                  (fn[e] (
+                      let  [value (.-value (.-target e)) ]
+                      (om/update! state [:games] 
+                        (filter (fn[item] (str/includes? (str/lower-case (:name item)) (str/lower-case value) )) (:allGames state))
+                      )
+                      (om/update! state [:tempSearchValue] value)
+                    )  
+                  ) 
+                  })
                 (om/build games-list-view (:games state) )
             )
           )
