@@ -20,7 +20,8 @@
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.hashers :as hashers]
             [shop.dao.user :as userDao]
-            [shop.dao.games :as gamesDao])
+            [shop.dao.games :as gamesDao]
+            [shop.bank])
   (:gen-class))
 
 (let [{:keys [ch-recv send-fn connected-uids
@@ -57,10 +58,10 @@
     (when ?reply-fn
       (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
 
-; (defmethod -event-msg-handler :games/fetch
-;   [{:keys [?reply-fn]}] (when ?reply-fn
-;     (?reply-fn @db))
-;   )
+(defmethod -event-msg-handler :transact/money
+  [{:keys [?data ?reply-fn]}] (when ?reply-fn
+    (?reply-fn (shop.bank/handle-payment 500 (:data ?data))))
+  )
 
 (defn stopRouter! []
   (when-let [stop-fn @router]
