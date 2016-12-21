@@ -104,6 +104,24 @@
 (defn createGame [request] (bad {:message (get-in request [:body :name])}))
 (defn removeGame [request] (bad {:message (get-in request [:body :name])}))
 (defn updateGame [request])
+
+(defn getAllGenres [request]
+    (let [genres (gamesDao/getAllGenres)]
+      (if(= genres nil)
+        (bad {:message "error"})
+        (ok {:genres genres})
+        )
+      )
+  )
+(defn getAllCountries [request]
+    (let [countries (gamesDao/getAllCountries)]
+      (if(= countries nil)
+        (bad {:message "error"})
+        (ok {:countries countries})
+        )
+      )
+  )
+
 (defn getAllGames [request]
     (let [games (gamesDao/getAllGames)]
       (if(= games nil)
@@ -124,6 +142,8 @@
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (GET "/game" [] getAllGames)
+  (GET "/countries" [] getAllCountries)
+  (GET "/genres" [] getAllGenres)
   (POST "/verifyToken" [] verify)
   (GET "/*" _
     {:status 200

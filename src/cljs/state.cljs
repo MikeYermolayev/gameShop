@@ -4,8 +4,14 @@
  	)
  (defonce app-state (atom {:user {}
                       :games []
-                      :isBasketShown false}))
+                      :isBasketShown false
+                      :tempSearchValue nil
+                      :allGames []
+                      :genres []
+                      :countries []}))
  (defn user []
     (om/ref-cursor (:user (om/root-cursor app-state))))
+  (defn games []
+    (om/ref-cursor (:games (om/root-cursor app-state))))
  (defn global-state []
     (om/ref-cursor (om/root-cursor app-state)))
