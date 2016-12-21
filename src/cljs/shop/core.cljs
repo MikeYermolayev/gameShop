@@ -94,6 +94,7 @@
                               .-location
                               (set! "#/login")))
                             :handler (fn [response]
+                              (println response)
                               (om/update! (shop.state/global-state) [:user] (:user response))
                               (-> js/document
                                 .-location

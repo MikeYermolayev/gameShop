@@ -42,6 +42,10 @@
 (defn ok [response] {:status 200 :body response})
 (defn bad [response] {:status 400 :body response})
 
+(defmacro dissoc-reversed
+  [operand1 operand2]
+  (list `dissoc operand2 operand1))
+
 (defmulti -event-msg-handler
   :id)
 
@@ -99,7 +103,7 @@
                       :exp (time/plus (time/now) (time/seconds 3600))}
               token (jwt/sign claims secret {:alg :hs512})
               newUser (userDao/insertNew {:username username :password (hashers/encrypt password)})]
-        (ok {:token token :user (dissoc newUser :password)}))
+        (ok {:token token :user (dissoc-reversed :password newUser)}))
       (bad {:message "user exists"}))))
 
 (defn createGame [request] (bad {:message (get-in request [:body :name])}))
@@ -136,7 +140,7 @@
   [request]
   (if-not (authenticated? request)
     (throw-unauthorized)
-    (ok {:user (dissoc (userDao/getUserByName (:user (:identity request))) :password)})))
+    (ok {:user (dissoc-reversed :password (userDao/getUserByName (:user (:identity request))))})))
 
 
 (defroutes routes
