@@ -8,6 +8,7 @@
                       :tempSearchValue nil
                       :allGames []
                       :filteredGenres []
+                      :loginError nil
                       :genres []
                       :countries []}))
   (defn filteredGenres []

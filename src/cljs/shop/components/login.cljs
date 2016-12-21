@@ -18,19 +18,31 @@
                       (ls/set-item! "token" (:token response))
                       (om/transact! state :user (fn [_]
                         (:user response)))
-                      (sec/dispatch! "/home"))}))))
+                      (sec/dispatch! "/home"))
+                    :error-handler (fn [response]
+                        (let [mess (:message (:response response))
+                              el (om/get-node owner "loginErr")]
+                            (om/update! state [:loginError] mess)
+                            (if (not= mess "")
+                              (.add (.-classList el) "visible")
+                              (.remove (.-classList el) "visible")
+                            ) 
+                        )
+                      )
+                     }))))
 
 (defn login-view
   [state owner]
   (reify
     om/IRender
     (render [_]
-      (dom/div nil
-        (dom/h3 nil "User name:")
+      (dom/div #js{:className "login-form"}
+        (dom/h3 nil "Login Panel")
         (dom/input #js {:placeholder "user name" :ref "name"})
-        (dom/h3 nil "Password")
         (dom/input #js {:placeholder "password" :ref "pass"})
+        (dom/article #js {:className "login-error" :ref "loginErr"} (:loginError state))
+        (dom/div nil
         (dom/button #js {:onClick #(auth "/login" state owner)}
         "Login")
-        (dom/button #js {:onClick #(auth "/register" state owner)}
-        "Register")))))
+        (dom/button #js {:className "register" :onClick #(auth "/register" state owner)}
+        "Register"))))))

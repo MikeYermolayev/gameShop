@@ -33,7 +33,6 @@
                         (when (:isadmin (shop.state/user))
                             (dom/i #js {:className "fa fa-trash" :onClick (fn[e] 
                                 (let [id (last (str/split (.-id (select-all (str "#game-" (:gameid game)))) "game-") )]
-                                  (println (shop.state/games))
                                   (POST "removeGame" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:id id}
@@ -106,7 +105,6 @@
                           (om/update! (shop.state/global-state) [:filteredGenres]   (disj (shop.state/filteredGenres) value))
                           (om/update! (shop.state/global-state) [:filteredGenres] (set(conj (shop.state/filteredGenres) value)))
                         )
-                      (println (shop.state/filteredGenres))
                       (om/update! (shop.state/global-state) [:games] 
                         (filter (fn[item] (or (empty? (shop.state/filteredGenres))  (contains? (shop.state/filteredGenres) (:genre item) ) ) ) (shop.state/allGames))
                       )
@@ -201,7 +199,6 @@
                                       price (.-value (om/get-node owner "price"))
                                       countryId  (.-value (select-all ".country"))
                                       genreId  (.-value (select-all ".genre"))]
-                                      (println countryId)
                                     (when (and(not= name "") (not= price "") (not= year ""))
                                       (POST "game" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
