@@ -3,7 +3,8 @@
             [om.dom :as dom :include-macros true])
  	)
  (defonce app-state (atom {:user {}
-                      :games []}))
+                      :games []
+                      :isBasketShown false}))
  (defn user []
     (om/ref-cursor (:user (om/root-cursor app-state))))
  (defn global-state []
