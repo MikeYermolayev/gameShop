@@ -204,8 +204,9 @@
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:price price :name name :year year :countryId countryId :genreId genreId}
                                                   :handler (fn [response] 
-                                                    (println (first (:generated_key response)))
-                                                    (let [newGame {:price price :gameid (:generated_key response) :name name :year year :countryId countryId :genreId genreId}]
+                                                    (let [
+                                                      key (:generated_key (first response))
+                                                      newGame {:price price :gameid key :name name :year year :countryId countryId :genreId genreId}]
                                                       (om/update! state [:games] (set(conj (shop.state/games) newGame)))
                                                       (om/update! state [:allGames] (set(conj (shop.state/allGames) newGame)))
                                                       )
