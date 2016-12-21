@@ -101,8 +101,28 @@
         (ok {:token token :user (dissoc newUser :password)}))
       (bad {:message "user exists"}))))
 
-(defn createGame [request] (bad {:message (get-in request [:body :name])}))
-(defn removeGame [request] (bad {:message (get-in request [:body :name])}))
+
+
+(defn createGame   [request]
+  (let [newGame {:name (get-in request [:body :name])
+                :year (get-in request [:body :year])
+                :price (get-in request [:body :price])
+                :countryId (get-in request [:body :countryId])
+                :genreId (get-in request [:body :genreId])}
+        game (gamesDao/insertGame  newGame)
+        ]
+    (if (= game nil)
+      (bad {:message "problem"})
+      (ok game)
+    )  
+  )
+)
+
+(defn removeGame [request] 
+  (let [status (gamesDao/removeGame (get-in request [:body :id]) )]
+  (ok {:status status})
+  )
+  )
 (defn updateGame [request])
 
 (defn getAllGenres [request]
@@ -152,7 +172,7 @@
   (POST "/login" [] login)
   (POST "/game" [] createGame)
   (PUT "/game" [] updateGame)
-  (DELETE "/game" [] removeGame)
+  (POST "/removeGame" [] removeGame)
   (POST "/register" [] register)
   (resources "/")
   (resources "/react" {:root "react"}))

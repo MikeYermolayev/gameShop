@@ -14,18 +14,35 @@
   (.log js/console "something bad happened:"))
 
 
+
+(defn select-all
+
+  ([selector]  (.querySelector js/document selector))
+)
+
 (defn game-view
     [game]
     (reify
         om/IRender
         (render [_]
-                (dom/div #js {:className "item"} 
+                (dom/div #js {:className "item" :id (str "game-" (:gameid game))} 
                       (dom/div #js{:className "button-info"}
                         (when (:isadmin (shop.state/user))
                             (dom/i #js {:className "fa fa-edit"})
                         )
                         (when (:isadmin (shop.state/user))
-                            (dom/i #js {:className "fa fa-trash"})
+                            (dom/i #js {:className "fa fa-trash" :onClick (fn[e] 
+                                (let [id (last (str/split (.-id (select-all (str "#game-" (:gameid game)))) "game-") )]
+                                  (println (shop.state/games))
+                                  (POST "removeGame" {:format :json
+                                                  :response-format (json-response-format {:keywords? true})
+                                                  :params {:id id}
+                                                  :handler (fn [response] 
+                                                      (om/update! (shop.state/global-state) [:games] (filter (fn[item] (not= id (str (:gameid item))  )  ) (shop.state/games))  )
+                                                      (om/update! (shop.state/global-state) [:allGames] (filter (fn[item] (not= id (str (:gameid item)) )  ) (shop.state/allGames))  )
+                                                    )})
+                                  )
+                              )})
                         )                          
                         (dom/i #js {:className "fa fa-shopping-basket"})
                         )
@@ -66,11 +83,11 @@
 )
 
 (defn select-list-view
-    [items]
+    [items owner ownName]
     (reify
         om/IRender
         (render [_]
-            (dom/select nil (om/build-all item-view items))
+            (dom/select #js{:className (:name ownName)} (om/build-all item-view items))
         )
     )
 )
@@ -113,6 +130,7 @@
         )
     )
 )
+
 
 (defn homeView
   [state owner]
@@ -170,13 +188,33 @@
             )
           (when (:isadmin (shop.state/user))
             (dom/div #js {:className "add-item-panel"}
-                (dom/form nil 
-                  (dom/input #js{:type "text" :require "true"})
-                  (dom/input #js{:type "number" :require "true"})
-                  (om/build select-list-view (:countries state) )
-                  (om/build select-list-view (:genres state) )
+                (dom/div nil 
+                  (dom/input #js{:type "text" :ref "name" :placeholder "Name"})
+                  (dom/input #js{:type "number" :ref "year" :placeholder "Year"})
+                  (dom/input #js{:type "number" :ref "price" :placeholder "Price"})
+                  (om/build select-list-view (:countries state) {:opts {:name "country"}})
+                  (om/build select-list-view (:genres state) {:opts {:name "genre"}} )
                   (dom/button #js{
-                            :onClick (fn [e])  
+                            :onClick (fn [e]
+                                (let [name (.-value (om/get-node owner "name"))
+                                      year (.-value (om/get-node owner "year"))
+                                      price (.-value (om/get-node owner "price"))
+                                      countryId  (.-value (select-all ".country"))
+                                      genreId  (.-value (select-all ".genre"))]
+                                      (println countryId)
+                                    (when (and(not= name "") (not= price "") (not= year ""))
+                                      (POST "game" {:format :json
+                                                  :response-format (json-response-format {:keywords? true})
+                                                  :params {:price price :name name :year year :countryId countryId :genreId genreId}
+                                                  :handler (fn [response] 
+                                                    (println (first (:generated_key response)))
+                                                    (let [newGame {:price price :gameid (:generated_key response) :name name :year year :countryId countryId :genreId genreId}]
+                                                      (om/update! state [:games] (set(conj (shop.state/games) newGame)))
+                                                      (om/update! state [:allGames] (set(conj (shop.state/allGames) newGame)))
+                                                      )
+                                                    )}))
+                                    )
+                               ) 
                       } "add")
                   )
               )

@@ -11,10 +11,14 @@
 (defn getAllCountries [] 
   (j/query db
     ["select country_id as id, name from countries"]))
-(defn deleteGame [id]
-  (j/query db 
-  	["delete from games where id = ?" id]))
+(defn removeGame [id]
+ (j/delete! db :games ["id = ?" id])
+ )
+
+(defn insertGame [creds]
+  (j/insert! db :games {:name (:name creds) :year (:year creds) :price (:price creds) :genre_id (:genreId creds) :country_id (:countryId creds)})
+)
 
 (defn updateGame[game]
    (j/query db 
-  	["update users SET name = ?,year = ?,genres_id = ?, countries_id = ? where id = ?" (:name game) (:year game) (:genres_id game) (:countries_id game) (:id game)]))
+  	["update users SET name = ?,year = ?,genres_id = ?, countries_id = ? where id = ?" (:name game) (:year game) (:genresId game) (:countriesId game) (:id game)]))

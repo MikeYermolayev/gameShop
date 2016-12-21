@@ -147,6 +147,31 @@ header{
 	color : red;
 }
 
+.add-item-panel > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 5px;
+    height: 50px;
+}
+.add-item-panel > div input{
+    padding: 5px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #b2a8a8;
+}
+select{
+   border-radius: 5px;
+}
+
+.add-item-panel button{
+    width: 61px;
+    border: 1px solid #84bbab;
+    background: rgba(0, 0, 0, 0.09);
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
 .genre-sidenav{
     height: 80px;
     width: 80px;
