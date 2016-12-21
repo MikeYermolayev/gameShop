@@ -147,6 +147,27 @@ header{
 	color : red;
 }
 
+.genre-sidenav{
+    height: 80px;
+    width: 80px;
+    color: white;
+    background: #6bbba3;
+    border-bottom: 1px solid #d9e0db;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 300;
+    font-size: 19px;
+    word-break: break-word;
+    padding: 5px;
+    text-align: center;
+}
+
+.genre-sidenav:hover,.genre-sidenav:active,.genre-sidenav.selected{
+        background: #1b8666;
+}
+
 .sidenav{
 	position: absolute;
     top: 0;

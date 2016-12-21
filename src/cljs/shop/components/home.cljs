@@ -74,6 +74,45 @@
     )
 )
 
+(defn genre-view
+    [item]
+    (reify
+        om/IRender
+        (render [_]
+                (dom/div #js {:className "genre-sidenav" :onClick (fn[e] 
+                      (if (.contains (.-classList (.-target e)) "selected")
+                        (.remove (.-classList (.-target e)) "selected")
+                        (.add (.-classList (.-target e)) "selected"))
+                      (let  [value (.-innerHTML (.-target e)) ] 
+                      (if (contains? (shop.state/filteredGenres) value )
+                          (om/update! (shop.state/global-state) [:filteredGenres]   (disj (shop.state/filteredGenres) value))
+                          (om/update! (shop.state/global-state) [:filteredGenres] (set(conj (shop.state/filteredGenres) value)))
+                        )
+                      (println (shop.state/filteredGenres))
+                      (om/update! (shop.state/global-state) [:games] 
+                        (filter (fn[item] (or (empty? (shop.state/filteredGenres))  (contains? (shop.state/filteredGenres) (:genre item) ) ) ) (shop.state/allGames))
+                      )
+
+                       
+                      )
+                      
+                      ; )
+                 )} (:name item) )
+
+        )
+    )
+)
+
+(defn genres-list-view
+    [items]
+    (reify
+        om/IRender
+        (render [_]
+            (dom/div nil (om/build-all genre-view items))
+        )
+    )
+)
+
 (defn homeView
   [state owner]
   (reify
@@ -103,7 +142,9 @@
       (dom/div nil
         (dom/div #js{
             :className "sidenav"
-          })
+          }
+            (om/build genres-list-view (:genres state) )
+          )
         (dom/header nil
             "Misha&Artur's Games Shop"
             (dom/i #js {
