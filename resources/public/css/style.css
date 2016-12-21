@@ -220,6 +220,8 @@ select{
     background-color: #eee;
     border: 3px solid #ddd;
     border-radius: 20px;
+    display: none;
+    transition:opacity .5s ease;
 }
 
 .fa-times{

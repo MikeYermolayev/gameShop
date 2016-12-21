@@ -4,10 +4,10 @@
             [ajax.core :refer [GET POST json-response-format]]
             [secretary.core :as sec
                 :include-macros true]
+            [clojure.string :as str]
             [shop.state]
             [shop.ls :as ls]
-            [shop.basket]
-            [shop.sockets]))
+            [shop.basket]))
 
 
 (defn error-handler [{:keys [status status-text]}]
@@ -44,17 +44,7 @@
                                   )
                               )})
                         )                          
-                        (dom/i #js {:className "fa fa-shopping-basket"
-                                    :onClick (fn [e] 
-                                      (shop.sockets/chsk-send! [:transact/money {:data (:price game)}] 
-                                        3000
-                                        (fn [e]
-                                          (println e)
-                                        )
-                                      )
-                                    )
-                                  }
-                        )
+                        (dom/i #js {:className "fa fa-shopping-basket"})
                         )
                       (dom/div #js{:className "item-info"} 
                           (dom/div #js {:className "item-year"} (dom/i nil "year : ")(:year game))
@@ -150,7 +140,19 @@
         (GET "/game" 
             {
             :response-format (json-response-format {:keywords? true})
-            :handler ( fn[response]  (om/update! state [:games] (:games response))  ) 
+            :handler ( fn[response]  (om/update! state [:games] (:games response)) (om/update! state [:allGames] (:games response))  ) 
+            :error-handler error-handler}
+            )
+        (GET "/countries" 
+            {
+            :response-format (json-response-format {:keywords? true})
+            :handler ( fn[response] (println response)  (om/update! state [:countries] (:countries response))  ) 
+            :error-handler error-handler}
+            )
+        (GET "/genres" 
+            {
+            :response-format (json-response-format {:keywords? true})
+            :handler ( fn[response] (println response)  (om/update! state [:genres] (:genres response))  ) 
             :error-handler error-handler}
             )
         )
@@ -218,7 +220,17 @@
               )
            )
           (dom/div #js{:className "content-inner"}
-                (dom/input #js{:className "search-input" :type "text" :placeholder "Search by name"})
+                (dom/input #js{:className "search-input" :value (:tempSearchValue state) :type "text" :placeholder "Search by name" 
+                  :onChange 
+                  (fn[e] (
+                      let  [value (.-value (.-target e)) ]
+                      (om/update! state [:games] 
+                        (filter (fn[item] (str/includes? (str/lower-case (:name item)) (str/lower-case value) )) (:allGames state))
+                      )
+                      (om/update! state [:tempSearchValue] value)
+                    )  
+                  ) 
+                  })
                 (om/build games-list-view (:games state) )
             )
           )
