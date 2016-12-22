@@ -115,12 +115,17 @@
                 :description (get-in request [:body :description])
                 :countryId (get-in request [:body :countryId])
                 :genreId (get-in request [:body :genreId])}
-        game (gamesDao/insertGame  newGame)
         ]
-    (if (= game nil)
-      (bad {:message "problem"})
-      (ok game)
-    )  
+     (if (or  (= (:name newGame) "" ) (= (:year newGame) "" ) (= (:price newGame) "" ) (= (:description newGame) "" ) (= (:countryId newGame) "" ) (= (:genreId newGame) "" ) )
+        (bad {:message "incorrect data"})
+        (let [game (gamesDao/insertGame  newGame)]   
+          (if (= game nil)
+            (bad {:message "problem"})
+            (ok game)
+          )
+       ) 
+     )
+      
   )
 )
 
@@ -135,7 +140,6 @@
   (ok {:status status})
   )
   )
-(defn updateGame [request])
 
 (defn getAllGenres [request]
     (let [genres (gamesDao/getAllGenres)]
@@ -184,7 +188,6 @@
   (POST "/login" [] login)
   (POST "/game" [] createGame)
   (POST "/bill" [] updateBill)
-  (PUT "/game" [] updateGame)
   (POST "/removeGame" [] removeGame)
   (POST "/register" [] register)
   (resources "/")

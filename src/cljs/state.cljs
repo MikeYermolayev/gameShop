@@ -8,6 +8,7 @@
                       :isInfoPopupShown false
                       :currentGame {}
                       :tempSearchValue nil
+                      :addItemError nil
                       :allGames []
                       :filteredGenres []
                       :loginError nil

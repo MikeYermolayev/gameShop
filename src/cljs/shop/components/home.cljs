@@ -117,6 +117,12 @@
         )
     )
 )
+
+(defn display [show]
+  (if show
+    #js {:display "flex"}
+    #js {:display "none"}))
+
 (defn homeView
   [state owner]
   (reify
@@ -179,17 +185,22 @@
                 (dom/article #js{:className "add-new-game"} "New game panel")
                 (dom/div #js{:className "inputs-wrap"} 
                   (dom/div #js{:className "inputs"}
-                      (dom/input #js{:type "text" :ref "name" :placeholder "Name"})
-                      (dom/input #js{:type "number" :ref "year" :placeholder "Year"})
-                      (dom/input #js{:type "number" :ref "price" :placeholder "Price"})
+                      (dom/input #js{:type "text" :ref "name" :placeholder "Name*"})
+                      (dom/input #js{:type "number" :ref "year" :placeholder "Year*"})
+                      (dom/input #js{:type "number" :ref "price" :placeholder "Price*"})
                     )
                   (dom/div #js{:className "area-wrapper"}
-                      (dom/textarea #js{:ref "description" :placeholder "Description"})
+                      (dom/textarea #js{:ref "description" :placeholder "Description*"})
                     )
                   )
                   (dom/div #js{:className "selects"}
                       (om/build select-list-view (:countries state) {:opts {:name "country"}})
                       (om/build select-list-view (:genres state) {:opts {:name "genre"}} )
+                    )
+                  (dom/div #js{
+                    :style (display (:addItemError state))
+                   :className "login-error" :ref "addingError" }
+                    (:addItemError state)
                     )
                   (dom/button #js{
                             :onClick (fn [e]
@@ -203,18 +214,22 @@
                                       genre  (.-innerHTML (select-all (str ".genre > option[value='" genreId "']")))
                                       ]
                                     (when (and(not= name "") (not= price "") (not= year "") (not= description ""))
+                                      (om/update! state [:addItemError] false)
                                       (POST "game" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:price price :description description :name name :year year :countryId countryId :genreId genreId}
                                                   :handler (fn [response] 
-                                                    (println (shop.state/games))
                                                     (let [
                                                       key (:generated_key (first response))
                                                       newGame {:price price :gameid key :name name :year year :genre genre :country country}]
-                                                      (om/update! state [:games] (set(conj (shop.state/games) newGame)))
-                                                      (om/update! state [:allGames] (set(conj (shop.state/allGames) newGame)))
+                                                      (om/update! state [:games] (set(conj (:games state) newGame)))
+                                                      (om/update! state [:allGames] (set(conj (:allGames state) newGame)))
                                                       )
-                                                    )}))
+                                                    )})
+                                      )
+                                      (when (or (= name "") (= price "") (= year "") (= description ""))
+                                        (om/update! state [:addItemError] "Put data in all required fields")
+                                        )
                                     )
                                ) 
                       } "add")

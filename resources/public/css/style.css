@@ -79,7 +79,9 @@ body *{
     font-size: 27px;
     font-weight: 200;
 }
-
+.add-item-panel .login-error{
+    margin-top: 10px !important;
+}
 .login-error{
     color: #b20f0f;
     width: 100%;
