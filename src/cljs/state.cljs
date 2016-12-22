@@ -6,6 +6,7 @@
                       :games []
                       :isBasketShown false
                       :isInfoPopupShown false
+                      :currentGame {}
                       :tempSearchValue nil
                       :allGames []
                       :filteredGenres []

@@ -350,11 +350,47 @@ select{
     top: 100px;
     z-index: 100;
     width: 500px;
+    padding-top: 50px;
     height: 500px;
     background-color: rgba(127, 204, 180, 0.93);
     border: 1px solid #6bbba3;
     border-radius: 20px;
     transition: opacity .5s ease;
+}
+
+.info{
+    justify-content: flex-start;
+    align-items: center;
+    max-height: 650px;
+    overflow: auto;
+    flex-direction: column;
+}
+
+.info table td{
+    color: black;
+    max-width: 190px;
+    word-break: break-word;
+    vertical-align: middle;
+    text-align: left;
+    border-bottom: 1px solid rgba(159, 255, 226, 0.17);
+    padding: 8px;
+}
+.info table tr td:first-child{
+    font-style: italic;
+    color: #cffff0;
+}
+
+.info-label{
+    letter-spacing: 10px;
+    font-size: 37px;
+    font-weight: 200;
+}
+
+.info table tr td:first-child:after{
+    content: ":"
+}
+.info-table{
+    border-collapse: collapse !important;
 }
 
 .add-new-game{

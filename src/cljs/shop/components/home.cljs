@@ -25,9 +25,6 @@
                 (dom/div #js {:className "item" :id (str "game-" (:gameid game))} 
                       (dom/div #js{:className "button-info"}
                         (when (:isadmin (shop.state/user))
-                            (dom/i #js {:className "fa fa-edit"})
-                        )
-                        (when (:isadmin (shop.state/user))
                             (dom/i #js {:className "fa fa-trash" :onClick (fn[e] 
                                 (let [id (:gameid game)]
                                   (POST "removeGame" {:format :json
@@ -48,6 +45,7 @@
                           (dom/div #js {:className "item-country"} (dom/i nil "country : ")(:country game))
                         )
                       (dom/div #js {:className "item-name" :onClick (fn[e]
+                         (om/update! (shop.state/global-state) [:currentGame] (first   (filter (fn[item] (= (:gameid game) (:gameid item))  ) (shop.state/allGames) ) ) ) 
                          (om/update! (shop.state/global-state) [:isInfoPopupShown] true) )} (:name game))
                       (dom/div #js {:className "item-price"} (:price game) "$")
                   )
