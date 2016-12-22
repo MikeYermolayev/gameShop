@@ -186,6 +186,7 @@
             )
           (when (:isadmin (shop.state/user))
             (dom/div #js {:className "add-item-panel"}
+                (dom/article #js{:className "add-new-game"} "New game panel")
                 (dom/div nil 
                   (dom/input #js{:type "text" :ref "name" :placeholder "Name"})
                   (dom/input #js{:type "number" :ref "year" :placeholder "Year"})

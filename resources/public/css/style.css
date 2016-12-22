@@ -3,14 +3,14 @@ h1 {
 }
 
 body,html{
-	padding : 0;
-	margin : 0;
-	width: 100%;
-	font-family: 'Roboto', sans-serif;
+    padding : 0;
+    margin : 0;
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
      background: #d7f2ea;
 }
 body *{
-	box-sizing: border-box;
+    box-sizing: border-box;
     outline: none;
 
 }
@@ -144,11 +144,11 @@ display: flex;
 }
 
 #app{
-	height: 100%;
-	width: 100%;
+    height: 100%;
+    width: 100%;
 }
 #app >div{
-	height: 100%;
+    height: 100%;
 }
 
 .content-inner{
@@ -163,7 +163,7 @@ display: flex;
 }
 
 .content{
-	position: absolute;
+    position: absolute;
     left: 80px;
     right: 0;
     bottom: 0;
@@ -182,12 +182,12 @@ display: flex;
     cursor: pointer;
 }
 .pre-head .fa-shopping-basket{
-	position: absolute;
-	right : 5px;
-	cursor: pointer;
+    position: absolute;
+    right : 5px;
+    cursor: pointer;
 }
 .content > div.pre-head{
-	height: 50px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -199,11 +199,11 @@ display: flex;
 }
 
 .login-name{
-	padding: 5px;
-	color : #00f1ff;
+    padding: 5px;
+    color : #00f1ff;
 }
 header{
-    right: 	0;
+    right:  0;
     width: calc(100% - 80px);
     height: 80px;
     font-size: 33px;
@@ -219,19 +219,33 @@ header{
 }
 
 .fa.fa-sign-out{
-	position: absolute;
+    position: absolute;
     right: 5px;
     cursor: pointer;
     transition: 0.3s linear all;
     color: white;
 }
 .fa:hover{
-	color : #ff7e7e;
+    color : #ff7e7e;
 }
 .fa:active{
-	color : red;
+    color : red;
 }
 
+.add-item-panel{
+    margin: 5px;
+    border: 1px solid #5aedbe;
+    border-radius: 3px;
+    background: #c9e2da;
+}
+
+.add-item-panel button:hover{
+    background: rgba(16, 213, 112, 0.09);
+}
+.add-item-panel button:active,
+.add-item-panel button:focus{
+    background: rgba(131, 255, 191, 0.68);
+}
 .add-item-panel > div{
     display: flex;
     flex-direction: row;
@@ -279,7 +293,7 @@ select{
 }
 
 .sidenav{
-	position: absolute;
+    position: absolute;
     top: 0;
     bottom: 0;
     width: 80px;
@@ -300,13 +314,20 @@ select{
     position: absolute;
     top: 0px;
     z-index: 100;
-    width: 700px;
-    height: 700px;
+    width: 500px;
+    height: 500px;
     background-color: #eee;
     border: 3px solid #ddd;
     border-radius: 20px;
     display: none;
     transition:opacity .5s ease;
+}
+
+.add-new-game{
+    width: 100%;
+    font-size: 25px;
+    font-weight: 200;
+    text-align: center;
 }
 
 .fa-times{
