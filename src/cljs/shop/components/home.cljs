@@ -31,8 +31,8 @@
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:id id}
                                                   :handler (fn [response] 
-                                                      (om/update! (shop.state/global-state) [:games] (filter (fn[item] (not= id (str (:gameid item))  )  ) (shop.state/games))  )
-                                                      (om/update! (shop.state/global-state) [:allGames] (filter (fn[item] (not= id (str (:gameid item)) )  ) (shop.state/allGames))  )
+                                                      (om/update! (shop.state/global-state) [:games] (filter (fn[item] (not= (:gameid game)  (:gameid item)  )  ) (:games (shop.state/global-state)))  )
+                                                      (om/update! (shop.state/global-state) [:allGames] (filter (fn[item] (not= (:gameid game) (:gameid item) )  ) (:allGames (shop.state/global-state)))  )
                                                     )})
                                   )
                               )})
