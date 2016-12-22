@@ -137,13 +137,13 @@
         (GET "/countries" 
             {
             :response-format (json-response-format {:keywords? true})
-            :handler ( fn[response] (println response)  (om/update! state [:countries] (:countries response))  ) 
+            :handler ( fn[response] (om/update! state [:countries] (:countries response))  ) 
             :error-handler error-handler}
             )
         (GET "/genres" 
             {
             :response-format (json-response-format {:keywords? true})
-            :handler ( fn[response] (println response)  (om/update! state [:genres] (:genres response))  ) 
+            :handler ( fn[response]  (om/update! state [:genres] (:genres response))  ) 
             :error-handler error-handler}
             )
         )
