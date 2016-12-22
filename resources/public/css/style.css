@@ -310,7 +310,7 @@ select{
     cursor: pointer;
 }
 
-.basket{
+.basket, .info{
     position: absolute;
     top: 0px;
     z-index: 100;
@@ -319,7 +319,6 @@ select{
     background-color: #eee;
     border: 3px solid #ddd;
     border-radius: 20px;
-    display: none;
     transition:opacity .5s ease;
 }
 

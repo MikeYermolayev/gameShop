@@ -5,6 +5,7 @@
             [secretary.core :as sec
                 :include-macros true]
             [clojure.string :as str]
+            [shop.info]
             [shop.state]
             [shop.ls :as ls]
             [shop.basket]))
@@ -12,14 +13,10 @@
 
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console "something bad happened:"))
-
-
-
 (defn select-all
 
   ([selector]  (.querySelector js/document selector))
 )
-
 (defn game-view
     [game]
     (reify
@@ -50,14 +47,13 @@
                           (dom/div #js {:className "item-genre"} (dom/i nil "genre : ")(:genre game))
                           (dom/div #js {:className "item-country"} (dom/i nil "country : ")(:country game))
                         )
-                      (dom/div #js {:className "item-name"} (:name game))
+                      (dom/div #js {:className "item-name" :onClick (fn[e]  (om/update! (shop.state/global-state) [:isInfoPopupShown] true) )} (:name game))
                       (dom/div #js {:className "item-price"} (:price game) "$")
                   )
 
         )
     )
 )
-
 (defn games-list-view
     [games]
     (reify
@@ -69,7 +65,6 @@
         )
     )
 )
-
 (defn item-view
     [item]
     (reify
@@ -80,7 +75,6 @@
         )
     )
 )
-
 (defn select-list-view
     [items owner ownName]
     (reify
@@ -90,7 +84,6 @@
         )
     )
 )
-
 (defn genre-view
     [item]
     (reify
@@ -101,15 +94,13 @@
                         (.remove (.-classList (.-target e)) "selected")
                         (.add (.-classList (.-target e)) "selected"))
                       (let  [value (.-innerHTML (.-target e)) ] 
-                      (if (contains? (shop.state/filteredGenres) value )
-                          (om/update! (shop.state/global-state) [:filteredGenres]   (disj (shop.state/filteredGenres) value))
-                          (om/update! (shop.state/global-state) [:filteredGenres] (set(conj (shop.state/filteredGenres) value)))
+                        (if (contains? (shop.state/filteredGenres) value )
+                            (om/update! (shop.state/global-state) [:filteredGenres]   (disj (shop.state/filteredGenres) value))
+                            (om/update! (shop.state/global-state) [:filteredGenres] (set(conj (shop.state/filteredGenres) value)))
+                          )
+                        (om/update! (shop.state/global-state) [:games] 
+                          (filter (fn[item] (or (empty? (shop.state/filteredGenres))  (contains? (shop.state/filteredGenres) (:genre item) ) ) ) (shop.state/allGames))
                         )
-                      (om/update! (shop.state/global-state) [:games] 
-                        (filter (fn[item] (or (empty? (shop.state/filteredGenres))  (contains? (shop.state/filteredGenres) (:genre item) ) ) ) (shop.state/allGames))
-                      )
-
-                       
                       )
                       
                       ; )
@@ -118,7 +109,6 @@
         )
     )
 )
-
 (defn genres-list-view
     [items]
     (reify
@@ -128,8 +118,6 @@
         )
     )
 )
-
-
 (defn homeView
   [state owner]
   (reify
@@ -174,6 +162,7 @@
               )
           )
         (dom/div #js{:className "content"}
+          (om/build shop.info/info state)
           (dom/div #js{
                 :className "pre-head"
             } str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
