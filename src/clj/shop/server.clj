@@ -112,6 +112,7 @@
   (let [newGame {:name (get-in request [:body :name])
                 :year (get-in request [:body :year])
                 :price (get-in request [:body :price])
+                :description (get-in request [:body :description])
                 :countryId (get-in request [:body :countryId])
                 :genreId (get-in request [:body :genreId])}
         game (gamesDao/insertGame  newGame)

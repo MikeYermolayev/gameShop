@@ -29,7 +29,7 @@
                         )
                         (when (:isadmin (shop.state/user))
                             (dom/i #js {:className "fa fa-trash" :onClick (fn[e] 
-                                (let [id (last (str/split (.-id (select-all (str "#game-" (:gameid game)))) "game-") )]
+                                (let [id (:gameid game)]
                                   (POST "removeGame" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:id id}
@@ -47,7 +47,8 @@
                           (dom/div #js {:className "item-genre"} (dom/i nil "genre : ")(:genre game))
                           (dom/div #js {:className "item-country"} (dom/i nil "country : ")(:country game))
                         )
-                      (dom/div #js {:className "item-name" :onClick (fn[e]  (om/update! (shop.state/global-state) [:isInfoPopupShown] true) )} (:name game))
+                      (dom/div #js {:className "item-name" :onClick (fn[e]
+                         (om/update! (shop.state/global-state) [:isInfoPopupShown] true) )} (:name game))
                       (dom/div #js {:className "item-price"} (:price game) "$")
                   )
 
@@ -176,26 +177,35 @@
           (when (:isadmin (shop.state/user))
             (dom/div #js {:className "add-item-panel"}
                 (dom/article #js{:className "add-new-game"} "New game panel")
-                (dom/div nil 
-                  (dom/input #js{:type "text" :ref "name" :placeholder "Name"})
-                  (dom/input #js{:type "number" :ref "year" :placeholder "Year"})
-                  (dom/input #js{:type "number" :ref "price" :placeholder "Price"})
-                  (om/build select-list-view (:countries state) {:opts {:name "country"}})
-                  (om/build select-list-view (:genres state) {:opts {:name "genre"}} )
+                (dom/div #js{:className "inputs-wrap"} 
+                  (dom/div #js{:className "inputs"}
+                      (dom/input #js{:type "text" :ref "name" :placeholder "Name"})
+                      (dom/input #js{:type "number" :ref "year" :placeholder "Year"})
+                      (dom/input #js{:type "number" :ref "price" :placeholder "Price"})
+                    )
+                  (dom/div #js{:className "area-wrapper"}
+                      (dom/textarea #js{:ref "description" :placeholder "Description"})
+                    )
+                  )
+                  (dom/div #js{:className "selects"}
+                      (om/build select-list-view (:countries state) {:opts {:name "country"}})
+                      (om/build select-list-view (:genres state) {:opts {:name "genre"}} )
+                    )
                   (dom/button #js{
                             :onClick (fn [e]
                                 (let [name (.-value (om/get-node owner "name"))
                                       year (.-value (om/get-node owner "year"))
+                                      description (.-value (om/get-node owner "description"))
                                       price (.-value (om/get-node owner "price"))
                                       countryId  (.-value (select-all ".country"))
                                       genreId  (.-value (select-all ".genre"))
                                       country  (.-innerHTML (select-all (str ".country > option[value='" countryId "']")))
                                       genre  (.-innerHTML (select-all (str ".genre > option[value='" genreId "']")))
                                       ]
-                                    (when (and(not= name "") (not= price "") (not= year ""))
+                                    (when (and(not= name "") (not= price "") (not= year "") (not= description ""))
                                       (POST "game" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
-                                                  :params {:price price :name name :year year :countryId countryId :genreId genreId}
+                                                  :params {:price price :description description :name name :year year :countryId countryId :genreId genreId}
                                                   :handler (fn [response] 
                                                     (println (shop.state/games))
                                                     (let [
@@ -208,7 +218,8 @@
                                     )
                                ) 
                       } "add")
-                  )
+                  
+                  
               )
            )
           (dom/div #js{:className "content-inner"}

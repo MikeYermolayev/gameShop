@@ -236,9 +236,32 @@ header{
     margin: 5px;
     border: 1px solid #5aedbe;
     border-radius: 3px;
+    padding : 15px;
     background: #c9e2da;
 }
 
+.inputs-wrap > div{
+    width: 48%;
+}
+
+.selects{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.selects select{
+    width: 48%;
+    height: 40px;
+}
+
+.add-item-panel textarea{
+    width: 100%;
+    padding : 5px;
+    height: 100%;
+    border-radius: 5px;
+    resize: none;
+}
 .add-item-panel button:hover{
     background: rgba(16, 213, 112, 0.09);
 }
@@ -246,12 +269,19 @@ header{
 .add-item-panel button:focus{
     background: rgba(131, 255, 191, 0.68);
 }
-.add-item-panel > div{
+
+.add-item-panel > .inputs-wrap{
     display: flex;
+    margin: 5px 0;
+    height: 150px;
     flex-direction: row;
-    justify-content: space-around;
-    padding: 5px;
-    height: 50px;
+    justify-content: space-between;
+}
+
+.add-item-panel .inputs{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .add-item-panel > div input{
     padding: 5px;
@@ -264,11 +294,16 @@ select{
 }
 
 .add-item-panel button{
-    width: 61px;
+    width: 100%;
     border: 1px solid #84bbab;
     background: rgba(0, 0, 0, 0.09);
     border-radius: 5px;
+    height: 40px;
+    font-size: 18px;
+    font-weight: 200;
     color: white;
+    margin-top: 10px;
+    text-transform: capitalize;
     cursor: pointer;
 }
 .genre-sidenav{
@@ -311,8 +346,8 @@ select{
 }
 
 .basket, .info{
-    position: absolute;
-    top: 0px;
+    position: fixed;
+    top: 100px;
     z-index: 100;
     width: 500px;
     height: 500px;

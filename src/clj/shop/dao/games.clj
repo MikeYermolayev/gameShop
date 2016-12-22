@@ -4,7 +4,7 @@
 
 (defn getAllGames [] 
   (j/query db
-    ["select games.id as gameid, games.name, year, price, genres.name as genre, countries.name as country from games join genres using (genre_id) join countries using (country_id)"]))
+    ["select games.id as gameid, games.name, description, year, price, genres.name as genre, countries.name as country from games join genres using (genre_id) join countries using (country_id)"]))
 (defn getAllGenres [] 
   (j/query db
     ["select genre_id as id, name from genres"]))
@@ -16,7 +16,7 @@
  )
 
 (defn insertGame [creds]
-  (j/insert! db :games {:name (:name creds) :year (:year creds) :price (:price creds) :genre_id (:genreId creds) :country_id (:countryId creds)})
+  (j/insert! db :games {:description (:description creds) :name (:name creds) :year (:year creds) :price (:price creds) :genre_id (:genreId creds) :country_id (:countryId creds)})
 )
 
 (defn updateGame[game]
