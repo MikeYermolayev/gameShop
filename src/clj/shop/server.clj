@@ -124,6 +124,12 @@
   )
 )
 
+(defn updateBill [request]
+    (let [status (userDao/updateBill {:bill (get-in request [:body :bill]) :id (get-in request [:body :id])} )]
+      (ok {:status status})
+    )  
+  )
+
 (defn removeGame [request] 
   (let [status (gamesDao/removeGame (get-in request [:body :id]) )]
   (ok {:status status})
@@ -177,6 +183,7 @@
      :body (io/input-stream (io/resource "public/index.html"))})
   (POST "/login" [] login)
   (POST "/game" [] createGame)
+  (POST "/bill" [] updateBill)
   (PUT "/game" [] updateGame)
   (POST "/removeGame" [] removeGame)
   (POST "/register" [] register)

@@ -159,11 +159,11 @@
                             (om/update! state [:user] {})
                             (sec/dispatch! "/login"))}
               )
-          )
-        (dom/div #js{:className "content"}
-          (dom/div #js{
+            (dom/div #js{
                 :className "pre-head"
-            } str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
+            }
+            (dom/div #js{:className "bill"} (dom/span #js{:className "bill-title"} "Your bill : ")  (:bill (:user state)) "$")
+             str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
             (dom/i #js {
                :className "fa fa-shopping-basket"
                :onClick (fn [e]
@@ -172,6 +172,8 @@
             (om/build shop.basket/basket state)
             (om/build shop.info/info state)
             )
+          )
+        (dom/div #js{:className "content"}
           (when (:isadmin (shop.state/user))
             (dom/div #js {:className "add-item-panel"}
                 (dom/article #js{:className "add-new-game"} "New game panel")

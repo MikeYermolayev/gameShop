@@ -23,6 +23,7 @@ body *{
     font-weight: 200;
     font-size: 40px;
     max-width: 300px;
+    cursor: pointer;
     color: #49766a;
     white-space: nowrap;
     overflow: hidden;
@@ -151,6 +152,22 @@ display: flex;
     height: 100%;
 }
 
+.bill-title{
+    color : white;
+}
+
+.bill{
+    position: absolute;
+    left: 0;
+    height: 100%;
+    padding: 10px;
+    color: #8aefcf;
+    display: flex;
+    background: rgba(0, 0, 0, 0.17);
+    justify-content: center;
+    align-items: center;
+    width: auto;
+}
 .content-inner{
     padding : 5px;
 }
@@ -167,7 +184,7 @@ display: flex;
     left: 80px;
     right: 0;
     bottom: 0;
-    top: 80px;
+    top: 130px;
     overflow: auto;
 }
 
@@ -186,16 +203,19 @@ display: flex;
     right : 5px;
     cursor: pointer;
 }
-.content > div.pre-head{
+div.pre-head{
     height: 50px;
     display: flex;
+    position: absolute;
+    width: 100%;
+    top : 80px;
     justify-content: center;
     align-items: center;
     font-size: 26px;
     font-weight: 200;
     background: rgba(0, 0, 0, 0.7);
     color: white;
-    position: relative;
+    z-index: 1;
 }
 
 .login-name{
