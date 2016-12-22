@@ -199,15 +199,19 @@
                                       year (.-value (om/get-node owner "year"))
                                       price (.-value (om/get-node owner "price"))
                                       countryId  (.-value (select-all ".country"))
-                                      genreId  (.-value (select-all ".genre"))]
+                                      genreId  (.-value (select-all ".genre"))
+                                      country  (.-innerHTML (select-all (str ".country > option[value='" countryId "']")))
+                                      genre  (.-innerHTML (select-all (str ".genre > option[value='" genreId "']")))
+                                      ]
                                     (when (and(not= name "") (not= price "") (not= year ""))
                                       (POST "game" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:price price :name name :year year :countryId countryId :genreId genreId}
                                                   :handler (fn [response] 
+                                                    (println (shop.state/games))
                                                     (let [
                                                       key (:generated_key (first response))
-                                                      newGame {:price price :gameid key :name name :year year :countryId countryId :genreId genreId}]
+                                                      newGame {:price price :gameid key :name name :year year :genre genre :country country}]
                                                       (om/update! state [:games] (set(conj (shop.state/games) newGame)))
                                                       (om/update! state [:allGames] (set(conj (shop.state/allGames) newGame)))
                                                       )
