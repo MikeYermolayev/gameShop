@@ -162,7 +162,6 @@
               )
           )
         (dom/div #js{:className "content"}
-          (om/build shop.info/info state)
           (dom/div #js{
                 :className "pre-head"
             } str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
@@ -172,6 +171,7 @@
                           (om/update! state [:isBasketShown] true))
               })
             (om/build shop.basket/basket state)
+            (om/build shop.info/info state)
             )
           (when (:isadmin (shop.state/user))
             (dom/div #js {:className "add-item-panel"}

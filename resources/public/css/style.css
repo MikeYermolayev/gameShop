@@ -316,10 +316,10 @@ select{
     z-index: 100;
     width: 500px;
     height: 500px;
-    background-color: #eee;
-    border: 3px solid #ddd;
+    background-color: rgba(127, 204, 180, 0.93);
+    border: 1px solid #6bbba3;
     border-radius: 20px;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
 .add-new-game{
@@ -332,7 +332,6 @@ select{
 .fa-times{
     cursor: pointer;
     position: absolute;
-    color: #000 !important;
     right: 20px;
     top: 20px;
 }
