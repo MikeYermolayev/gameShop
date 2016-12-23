@@ -64,7 +64,7 @@
 
 (defmethod -event-msg-handler :transact/money
   [{:keys [?data ?reply-fn]}] (when ?reply-fn
-    (?reply-fn (shop.bank/handle-payment 500 (:data ?data))))
+    (?reply-fn (shop.bank/handle-payment (:client-balance ?data) (:receipt ?data))))
   )
 
 (defn stopRouter! []

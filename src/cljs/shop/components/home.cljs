@@ -165,21 +165,23 @@
                :className "fa fa-sign-out"
                :href "#/login"
                :onClick (fn [e]
-                            (ls/remove-item! "token")
+                            (ls/clear!)
                             (om/update! state [:user] {})
                             (sec/dispatch! "/login"))}
               )
             (dom/div #js{
                 :className "pre-head"
             }
-            (dom/div #js{:className "bill"} (dom/span #js{:className "bill-title"} "Your bill : ")  (:bill (:user state)) "$")
+            (dom/div #js{:className "bill"} (dom/span #js{:className "bill-title"} "Your balance : ")  (:bill (:user state)) "$")
              str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
             (dom/i #js {
                :className "fa fa-shopping-basket"
                :onClick (fn [e]
                           (om/update! state [:isCartShown] true))
               })
-            (om/build shop.cart/cart state)
+            (if (:isCartShown state)
+              (om/build shop.cart/cart state)
+              )
             (om/build shop.info/info state)
             )
           )

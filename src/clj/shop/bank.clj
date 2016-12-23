@@ -7,5 +7,4 @@
     (dosync
       (alter shop-account + receipt)
       (alter client-account - receipt))
-    )
-  @shop-account)
+    @client-account))

@@ -1,7 +1,9 @@
 (ns shop.cart
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [shop.cart.dsl :refer [getCart]]))
+            [shop.sockets :refer [chsk-send!]]
+            [shop.state :refer [user]]
+            [shop.cart.dsl :refer [getCart removeFromCart clearCart]]))
 
 (defn display [show]
   (if show
@@ -27,7 +29,9 @@
           } str (:price state) "$")
         (dom/button #js {
           :className "remove-from-cart"
-          :onClick #(om/set-state! cart-owner [:cart] (remove (fn [item] (= (:name item) (:name state))) (om/get-state cart-owner [:cart])))
+          :onClick (fn [e]
+            (removeFromCart (:name state))(om/set-state! cart-owner [:cart] (getCart))
+            )
           } "Remove")))))
 
 (defn cart
@@ -57,6 +61,16 @@
           )
         (dom/div #js {
           :className "confirm-buy"
+          :onClick (fn [e]
+            (chsk-send! [:transact/money {:client-balance (:bill (user)) :receipt (reduce + (map (fn [item] (* (:count item)(:price item))) cart))}]
+                        3000
+                        (fn [money-last]
+                          (when (integer? money-last)
+                            (om/update! (user) [:bill] money-last)
+                            (shop.cart.dsl/clearCart)
+                            (om/set-state! owner [:cart] (getCart))
+                            )
+                          )))
         }
         "Confirm buy")))))
 
