@@ -10,7 +10,8 @@
             [shop.login]
             [ajax.core :refer [GET POST json-response-format]]
             [shop.state]
-            [shop.ls])
+            [shop.ls]
+            [shop.cart.dsl :refer [init-cart]])
   (:import goog.History))
 
 (enable-console-print!)
@@ -83,6 +84,7 @@
         {:target (.getElementById js/document "app")}))
 
 (defn main []
+  (init-cart)
   (let [token (shop.ls/get-item "token")]
     (if token
       (POST "/verifyToken" {:format :json

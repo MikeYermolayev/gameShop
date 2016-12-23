@@ -4,7 +4,7 @@
  	)
  (defonce app-state (atom {:user {}
                       :games []
-                      :isBasketShown false
+                      :isCartShown false
                       :isInfoPopupShown false
                       :tempSearchValue nil
                       :allGames []

@@ -8,7 +8,8 @@
             [shop.info]
             [shop.state]
             [shop.ls :as ls]
-            [shop.basket]))
+            [shop.cart]
+            [shop.cart.dsl :refer [addToCart]]))
 
 
 (defn error-handler [{:keys [status status-text]}]
@@ -40,7 +41,10 @@
                                   )
                               )})
                         )                          
-                        (dom/i #js {:className "fa fa-shopping-basket"})
+                        (dom/i #js {
+                          :className "fa fa-shopping-basket"
+                          :onClick #(addToCart (:name game) (:price game))
+                          })
                         )
                       (dom/div #js{:className "item-info"} 
                           (dom/div #js {:className "item-year"} (dom/i nil "year : ")(:year game))
@@ -169,9 +173,9 @@
             (dom/i #js {
                :className "fa fa-shopping-basket"
                :onClick (fn [e]
-                          (om/update! state [:isBasketShown] true))
+                          (om/update! state [:isCartShown] true))
               })
-            (om/build shop.basket/basket state)
+            (om/build shop.cart/cart state)
             (om/build shop.info/info state)
             )
           (when (:isadmin (shop.state/user))

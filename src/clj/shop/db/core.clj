@@ -4,5 +4,4 @@
         :subprotocol "mysql"
         :subname "//localhost:3306/mydb?serverTimezone=UTC"
         :user "root"
-        :password "99996578"})
-
+        :password ""})

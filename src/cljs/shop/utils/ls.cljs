@@ -1,4 +1,5 @@
-(ns shop.ls)
+(ns shop.ls
+  (:require [cljs.reader :as reader]))
 
 (defn set-item!
   [key val]
@@ -6,7 +7,7 @@
 
 (defn get-item
   [key]
-  (.getItem (.-localStorage js/window) key))
+  (reader/read-string (.getItem (.-localStorage js/window) key)))
 
 (defn remove-item!
   [key]
