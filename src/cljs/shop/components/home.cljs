@@ -26,17 +26,14 @@
                 (dom/div #js {:className "item" :id (str "game-" (:gameid game))} 
                       (dom/div #js{:className "button-info"}
                         (when (:isadmin (shop.state/user))
-                            (dom/i #js {:className "fa fa-edit"})
-                        )
-                        (when (:isadmin (shop.state/user))
                             (dom/i #js {:className "fa fa-trash" :onClick (fn[e] 
                                 (let [id (:gameid game)]
                                   (POST "removeGame" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:id id}
                                                   :handler (fn [response] 
-                                                      (om/update! (shop.state/global-state) [:games] (filter (fn[item] (not= id (str (:gameid item))  )  ) (shop.state/games))  )
-                                                      (om/update! (shop.state/global-state) [:allGames] (filter (fn[item] (not= id (str (:gameid item)) )  ) (shop.state/allGames))  )
+                                                      (om/update! (shop.state/global-state) [:games] (filter (fn[item] (not= (:gameid game)  (:gameid item)  )  ) (:games (shop.state/global-state)))  )
+                                                      (om/update! (shop.state/global-state) [:allGames] (filter (fn[item] (not= (:gameid game) (:gameid item) )  ) (:allGames (shop.state/global-state)))  )
                                                     )})
                                   )
                               )})
@@ -52,6 +49,7 @@
                           (dom/div #js {:className "item-country"} (dom/i nil "country : ")(:country game))
                         )
                       (dom/div #js {:className "item-name" :onClick (fn[e]
+                         (om/update! (shop.state/global-state) [:currentGame] (first   (filter (fn[item] (= (:gameid game) (:gameid item))  ) (:allGames (shop.state/global-state)) ) ) ) 
                          (om/update! (shop.state/global-state) [:isInfoPopupShown] true) )} (:name game))
                       (dom/div #js {:className "item-price"} (:price game) "$")
                   )
@@ -123,6 +121,12 @@
         )
     )
 )
+
+(defn display [show]
+  (if show
+    #js {:display "flex"}
+    #js {:display "none"}))
+
 (defn homeView
   [state owner]
   (reify
@@ -137,13 +141,13 @@
         (GET "/countries" 
             {
             :response-format (json-response-format {:keywords? true})
-            :handler ( fn[response] (println response)  (om/update! state [:countries] (:countries response))  ) 
+            :handler ( fn[response] (om/update! state [:countries] (:countries response))  ) 
             :error-handler error-handler}
             )
         (GET "/genres" 
             {
             :response-format (json-response-format {:keywords? true})
-            :handler ( fn[response] (println response)  (om/update! state [:genres] (:genres response))  ) 
+            :handler ( fn[response]  (om/update! state [:genres] (:genres response))  ) 
             :error-handler error-handler}
             )
         )
@@ -165,11 +169,11 @@
                             (om/update! state [:user] {})
                             (sec/dispatch! "/login"))}
               )
-          )
-        (dom/div #js{:className "content"}
-          (dom/div #js{
+            (dom/div #js{
                 :className "pre-head"
-            } str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
+            }
+            (dom/div #js{:className "bill"} (dom/span #js{:className "bill-title"} "Your bill : ")  (:bill (:user state)) "$")
+             str "Welcome to the online game shop," (dom/span #js{:className "login-name"} (:username (:user state)))
             (dom/i #js {
                :className "fa fa-shopping-basket"
                :onClick (fn [e]
@@ -178,22 +182,29 @@
             (om/build shop.cart/cart state)
             (om/build shop.info/info state)
             )
+          )
+        (dom/div #js{:className "content"}
           (when (:isadmin (shop.state/user))
             (dom/div #js {:className "add-item-panel"}
                 (dom/article #js{:className "add-new-game"} "New game panel")
                 (dom/div #js{:className "inputs-wrap"} 
                   (dom/div #js{:className "inputs"}
-                      (dom/input #js{:type "text" :ref "name" :placeholder "Name"})
-                      (dom/input #js{:type "number" :ref "year" :placeholder "Year"})
-                      (dom/input #js{:type "number" :ref "price" :placeholder "Price"})
+                      (dom/input #js{:type "text" :ref "name" :placeholder "Name*"})
+                      (dom/input #js{:type "number" :ref "year" :placeholder "Year*"})
+                      (dom/input #js{:type "number" :ref "price" :placeholder "Price*"})
                     )
                   (dom/div #js{:className "area-wrapper"}
-                      (dom/textarea #js{:ref "description" :placeholder "Description"})
+                      (dom/textarea #js{:ref "description" :placeholder "Description*"})
                     )
                   )
                   (dom/div #js{:className "selects"}
                       (om/build select-list-view (:countries state) {:opts {:name "country"}})
                       (om/build select-list-view (:genres state) {:opts {:name "genre"}} )
+                    )
+                  (dom/div #js{
+                    :style (display (:addItemError state))
+                   :className "login-error" :ref "addingError" }
+                    (:addItemError state)
                     )
                   (dom/button #js{
                             :onClick (fn [e]
@@ -207,18 +218,22 @@
                                       genre  (.-innerHTML (select-all (str ".genre > option[value='" genreId "']")))
                                       ]
                                     (when (and(not= name "") (not= price "") (not= year "") (not= description ""))
+                                      (om/update! state [:addItemError] false)
                                       (POST "game" {:format :json
                                                   :response-format (json-response-format {:keywords? true})
                                                   :params {:price price :description description :name name :year year :countryId countryId :genreId genreId}
                                                   :handler (fn [response] 
-                                                    (println (shop.state/games))
                                                     (let [
                                                       key (:generated_key (first response))
                                                       newGame {:price price :gameid key :name name :year year :genre genre :country country}]
-                                                      (om/update! state [:games] (set(conj (shop.state/games) newGame)))
-                                                      (om/update! state [:allGames] (set(conj (shop.state/allGames) newGame)))
+                                                      (om/update! state [:games] (set(conj (:games state) newGame)))
+                                                      (om/update! state [:allGames] (set(conj (:allGames state) newGame)))
                                                       )
-                                                    )}))
+                                                    )})
+                                      )
+                                      (when (or (= name "") (= price "") (= year "") (= description ""))
+                                        (om/update! state [:addItemError] "Put data in all required fields")
+                                        )
                                     )
                                ) 
                       } "add")
